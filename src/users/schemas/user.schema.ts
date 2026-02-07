@@ -3,14 +3,11 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ required: true })
-  // todo add unique and index
+  @Prop({ required: true, index: true })
   name: string;
-  // @Prop({ required: true, unique: true })
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   email: string;
-  // @Prop({ required: true, unique: true })
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   phone: string;
   @Prop()
   birthDate: Date;

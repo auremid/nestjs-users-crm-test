@@ -12,11 +12,11 @@ export class UsersService implements OnModuleInit {
     private readonly userModel: Model<UserDocument>,
   ) {}
 
-  private generateUser() {
+  private generateUser(index: number) {
     return {
       name: faker.person.fullName(),
-      email: faker.internet.email(),
-      phone: faker.phone.number({ style: 'international' }),
+      email: `${index}-${faker.internet.email()}`,
+      phone: `+${380000000000 + index}`,
       birthDate: faker.date.birthdate({ min: 18, max: 70, mode: 'age' }),
     };
   }
@@ -29,8 +29,12 @@ export class UsersService implements OnModuleInit {
   async onModuleInit() {
     console.log('UsersService initialized');
 
-    if (!process.env.SEED_ON_START) return;
-    if (await this.isDBNotEmpty()) return;
+    if (await this.isDBNotEmpty()) {
+      console.log('Database is not empty -> skip data upload.');
+      return;
+    } else {
+      console.log('Database is empty -> starting data upload...');
+    }
 
     type UserSeed = {
       name: string;
@@ -42,14 +46,16 @@ export class UsersService implements OnModuleInit {
     const batchSize = 10_000;
     const total = 2_000_000;
     const batches = Math.ceil(total / batchSize);
+    let uniqueIndexCounter = 0;
 
     for (let i = 0; i < batches; i++) {
       const batch: UserSeed[] = [];
       for (let j = 0; j < batchSize; j++) {
-        batch.push(this.generateUser());
+        batch.push(this.generateUser(uniqueIndexCounter));
+        uniqueIndexCounter++;
       }
       await this.userModel.insertMany(batch, { ordered: false });
-      console.log(`Add batch #${i}`);
+      console.log(`Add batch #${i + 1}/${batches}`);
     }
   }
 }
