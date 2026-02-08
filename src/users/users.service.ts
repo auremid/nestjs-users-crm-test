@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { faker } from '@faker-js/faker';
 import { UsersQueryDto } from './dto/get-users.query.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -77,6 +78,12 @@ export class UsersService implements OnModuleInit {
     const total = await this.userModel.countDocuments(filter);
 
     return { users, total, page, limit };
+  }
+
+  async createUser(body: CreateUserDto) {
+    const created = await this.userModel.create(body);
+    console.log(`User "${created.name}" (ID:${created._id}) was added.`);
+    return created;
   }
 
   private generateUser(index: number) {
