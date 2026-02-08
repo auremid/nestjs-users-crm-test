@@ -1,98 +1,179 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Users CRM
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A simple REST API for user management, built with NestJS, MongoDB, Mongoose, and JWT authentication. On startup, it automatically creates 2 million random users if the database is empty.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Requirements
 
-## Description
+- Node.js v22+
+- Docker and Docker Compose
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Installation
 
-## Project setup
+1. Clone the repository:
 
-```bash
-$ npm install
-```
+   ```bash
+   git clone https://github.com/auremid/nestjs-users-crm-test.git
+   cd nestjs-users-crm-test
+   ```
 
-## Compile and run the project
+2. For running **Option 2** (local server): Install dependencies with `npm install`.
+3. Depending on the running option:
+   - For running **Option 1** (full Docker setup): Use the provided `.env.docker` file.
+   - For running **Option 2** (local server): Copy `.env.example` to `.env` and adjust if needed.
+   ```
+   MONGO_URI=mongodb://localhost:27017/userscrm
+   JWT_SECRET=supersecret
+   SEED_ON_START=true
+   ```
 
-```bash
-# development
-$ npm run start
+## Running
 
-# watch mode
-$ npm run start:dev
+### Option 1: Full Docker setup (recommended)
 
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
+This option runs the entire setup (API + MongoDB) in containers.
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose -f docker-compose.full.yml up -d --build
 ```
 
-## Deployment
+API will be available at `http://localhost:3000`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Option 2: Only database via Docker, server via command line
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Run only MongoDB in a container:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Then run the server locally:
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+API will be available at `http://localhost:3000`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## API Endpoints
 
-## Support
+All requests to `/api/v1/*` require a JWT token in the header: `Authorization: Bearer <token>`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Get JWT Token
 
-## Stay in touch
+- **POST** `/api/v1/login`
+- Description: Get a token for authorization (no additional credentials required).
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Example request:
 
-## License
+```bash
+curl -X POST http://localhost:3000/api/v1/login
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Response:
+
+```json
+{
+  "access_token": "your-jwt-token"
+}
+```
+
+### Add User
+
+- **POST** `/api/v1/add-user`
+- Description: Add a new user.
+- Body (JSON):
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "birthDate": "1990-01-01"
+  }
+  ```
+
+Example request:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/add-user \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John Doe", "email": "john@example.com", "phone": "+1234567890", "birthDate": "1990-01-01"}'
+```
+
+### Get Users List
+
+- **GET** `/api/v1/get-users`
+- Description: Get a list of users with pagination and filters.
+- Query parameters:
+  - `page` (optional): Page number (default 1)
+  - `limit` (optional): Number of users per page (default 10)
+  - `name` (optional): Search by name
+
+Example request:
+
+```bash
+curl "http://localhost:3000/api/v1/get-users?page=1&limit=10&name=John" \
+  -H "Authorization: Bearer <token>"
+```
+
+Response:
+
+```json
+{
+  "users": [
+    {
+      "_id": "user-id",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "birthDate": "1990-01-01T00:00:00.000Z",
+      "createdAt": "2023-01-01T00:00:00.000Z",
+      "updatedAt": "2023-01-01T00:00:00.000Z"
+    }
+  ],
+  "total": 2000000,
+  "page": 1,
+  "limit": 10
+}
+```
+
+### Get User by ID
+
+- **GET** `/api/v1/get-user/:id`
+- Description: Get a single user by their ID.
+- Parameter: `id` (user's ObjectId)
+
+Example request:
+
+```bash
+curl http://localhost:3000/api/v1/get-user/507f1f77bcf86cd799439011 \
+  -H "Authorization: Bearer <token>"
+```
+
+Response:
+
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890",
+  "birthDate": "1990-01-01T00:00:00.000Z",
+  "createdAt": "2023-01-01T00:00:00.000Z",
+  "updatedAt": "2023-01-01T00:00:00.000Z"
+}
+```
+
+## Filters on /api/v1/get-users
+
+- **page**: Page number for pagination (integer, starts from 1).
+- **limit**: Maximum number of users per page (integer, default 10).
+- **name**: Search by user name. Supports case-insensitive search and partial matches (e.g., "John" will find "John Doe", "john", etc.).
+- **email**: Search by user email. Supports exact match.
+- **phone**: Search by user phone. Supports exact match.
+
+## Additional Notes
+
+- On server startup, automatic seeding of 2 million users occurs if the database is empty (controlled by the `SEED_ON_START` variable).
+- All emails and phones are unique due to database indexes.
+- Errors are handled with appropriate HTTP status codes (400, 404, 409, etc.).
