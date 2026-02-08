@@ -32,6 +32,8 @@ export class UsersService implements OnModuleInit {
       this.logger.log('seed start db_empty');
     }
 
+    const startTime = performance.now();
+
     type UserSeed = {
       name: string;
       email: string;
@@ -55,8 +57,10 @@ export class UsersService implements OnModuleInit {
       await this.userModel.insertMany(batch, { ordered: false });
       this.logger.log(`seed progress batch=${i + 1}/${batches}`);
     }
-
-    this.logger.log(`seed done total=${total}`);
+    const endTime = performance.now();
+    this.logger.log(
+      `seed done total=${total} time=${Math.ceil((endTime - startTime) / 1000)} seconds`,
+    );
   }
 
   async getUserById(userId: string) {
