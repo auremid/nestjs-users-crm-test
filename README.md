@@ -164,6 +164,10 @@ Response:
 }
 ```
 
+## Postman Collection
+
+Test the API with this [Postman collection](https://bit.ly/3M9lTOB).
+
 ## Filters on /api/v1/get-users
 
 - **page**: Page number for pagination (integer, starts from 1).
