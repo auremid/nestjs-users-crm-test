@@ -175,5 +175,6 @@ Response:
 ## Additional Notes
 
 - On server startup, automatic seeding of 2 million users occurs if the database is empty (controlled by the `SEED_ON_START` variable).
+- The seeding process runs asynchronously in the background, allowing the server to start and handle requests immediately.
 - All emails and phones are unique due to database indexes.
 - Errors are handled with appropriate HTTP status codes (400, 404, 409, etc.).
