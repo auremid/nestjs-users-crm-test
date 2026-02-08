@@ -56,9 +56,16 @@ export class UsersService implements OnModuleInit {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
 
-    type UsersFilter = { name?: string; email?: string; phone?: string };
+    type UsersFilter = {
+      name?: string | RegExp;
+      email?: string;
+      phone?: string;
+    };
     const filter: UsersFilter = {};
-    if (query.name) filter.name = query.name;
+    if (query.name) {
+      const escaped = query.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.name = new RegExp(escaped, 'i');
+    }
     if (query.email) filter.email = query.email;
     if (query.phone) filter.phone = query.phone;
 
@@ -67,7 +74,9 @@ export class UsersService implements OnModuleInit {
       .skip((page - 1) * limit)
       .limit(limit);
 
-    return { users, page, limit };
+    const total = await this.userModel.countDocuments(filter);
+
+    return { users, total, page, limit };
   }
 
   private generateUser(index: number) {
