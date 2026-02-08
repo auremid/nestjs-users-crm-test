@@ -38,6 +38,11 @@ docker compose -f docker-compose.full.yml up -d --build
 
 API will be available at `http://localhost:3000`.
 
+To view server logs:
+```bash
+docker compose -f docker-compose.full.yml logs -f api
+```
+
 ### Option 2: Only database via Docker, server via command line
 
 Run only MongoDB in a container:
@@ -53,6 +58,11 @@ npm run start:dev
 ```
 
 API will be available at `http://localhost:3000`.
+
+Logs will be displayed in the terminal. To view them separately if needed:
+```bash
+# Since the server is running locally, logs are in the terminal where npm run start:dev is executed
+```
 
 ## API Endpoints
 
