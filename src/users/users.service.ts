@@ -23,6 +23,10 @@ export class UsersService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    setTimeout(() => this.runSeed(), 1000);
+  }
+
+  async runSeed() {
     if (process.env.SEED_ON_START !== 'true') return;
 
     if (await this.isDBNotEmpty()) {
