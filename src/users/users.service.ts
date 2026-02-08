@@ -1,7 +1,13 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { faker } from '@faker-js/faker';
 import { UsersQueryDto } from './dto/get-users.query.dto';
@@ -54,11 +60,17 @@ export class UsersService implements OnModuleInit {
   }
 
   async getUserById(userId: string) {
+    if (!isValidObjectId(userId)) {
+      this.logger.warn(`getUserById invalid_id id=${userId}`);
+      throw new BadRequestException('Invalid user id');
+    }
+
     const user = await this.userModel.findById(userId);
     if (!user) {
       this.logger.warn(`getUserById not_found id=${userId}`);
       throw new NotFoundException('User not found');
     }
+
     this.logger.log(`getUserById ok id=${userId}`);
     return user;
   }
@@ -95,9 +107,20 @@ export class UsersService implements OnModuleInit {
   }
 
   async createUser(body: CreateUserDto) {
-    const created = await this.userModel.create(body);
-    this.logger.log(`createUser ok name="${created.name}" id=${created._id}`);
-    return created;
+    try {
+      const created = await this.userModel.create(body);
+      this.logger.log(`createUser ok name="${created.name}" id=${created._id}`);
+      return created;
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        this.logger.warn(
+          `createUser duplicate key: ${JSON.stringify(err.keyValue)}`,
+        );
+        throw new ConflictException('Email or phone already exists');
+      }
+      this.logger.error(`createUser failed: ${err?.message}`);
+      throw err;
+    }
   }
 
   private generateUser(index: number) {
