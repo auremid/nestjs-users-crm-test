@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -9,6 +9,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
@@ -18,10 +20,10 @@ export class UsersService implements OnModuleInit {
     if (process.env.SEED_ON_START !== 'true') return;
 
     if (await this.isDBNotEmpty()) {
-      console.log('Database is not empty -> skip data upload.');
+      this.logger.log('seed skip db_not_empty');
       return;
     } else {
-      console.log('Database is empty -> starting data upload...');
+      this.logger.log('seed start db_empty');
     }
 
     type UserSeed = {
@@ -36,6 +38,8 @@ export class UsersService implements OnModuleInit {
     const batches = Math.ceil(total / batchSize);
     let uniqueIndexCounter = 0;
 
+    this.logger.log(`seed start total=${total} batchSize=${batchSize}`);
+
     for (let i = 0; i < batches; i++) {
       const batch: UserSeed[] = [];
       for (let j = 0; j < batchSize; j++) {
@@ -43,13 +47,19 @@ export class UsersService implements OnModuleInit {
         uniqueIndexCounter++;
       }
       await this.userModel.insertMany(batch, { ordered: false });
-      console.log(`Add batch #${i + 1}/${batches}`);
+      this.logger.log(`seed progress batch=${i + 1}/${batches}`);
     }
+
+    this.logger.log(`seed done total=${total}`);
   }
 
   async getUserById(userId: string) {
     const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) {
+      this.logger.warn(`getUserById not_found id=${userId}`);
+      throw new NotFoundException('User not found');
+    }
+    this.logger.log(`getUserById ok id=${userId}`);
     return user;
   }
 
@@ -77,12 +87,16 @@ export class UsersService implements OnModuleInit {
 
     const total = await this.userModel.countDocuments(filter);
 
+    this.logger.log(
+      `getUserList ok page=${page} limit=${limit} count=${users.length} filter: ( name="${query.name ?? ''}" email="${query.email ?? ''}" phone="${query.phone ?? ''}" )`,
+    );
+
     return { users, total, page, limit };
   }
 
   async createUser(body: CreateUserDto) {
     const created = await this.userModel.create(body);
-    console.log(`User "${created.name}" (ID:${created._id}) was added.`);
+    this.logger.log(`createUser ok name="${created.name}" id=${created._id}`);
     return created;
   }
 
