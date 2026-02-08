@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { faker } from '@faker-js/faker';
+import { UsersQueryDto } from './dto/get-users.query.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -13,8 +14,6 @@ export class UsersService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    console.log('UsersService initialized');
-
     if (process.env.SEED_ON_START !== 'true') return;
 
     if (await this.isDBNotEmpty()) {
@@ -51,6 +50,24 @@ export class UsersService implements OnModuleInit {
     const user = await this.userModel.findById(userId);
     if (!user) throw new NotFoundException('User not found');
     return user;
+  }
+
+  async getUsers(query: UsersQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+
+    type UsersFilter = { name?: string; email?: string; phone?: string };
+    const filter: UsersFilter = {};
+    if (query.name) filter.name = query.name;
+    if (query.email) filter.email = query.email;
+    if (query.phone) filter.phone = query.phone;
+
+    const users = await this.userModel
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return { users, page, limit };
   }
 
   private generateUser(index: number) {
