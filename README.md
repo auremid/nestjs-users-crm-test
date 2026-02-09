@@ -16,10 +16,8 @@ A simple REST API for user management, built with NestJS, MongoDB, Mongoose, and
    cd nestjs-users-crm-test
    ```
 
-2. For running **Option 2** (local server): Install dependencies with `npm install`.
-3. Depending on the running option:
-   - For running **Option 1** (full Docker setup): Use the provided `.env.docker` file.
-   - For running **Option 2** (local server): Copy `.env.example` to `.env` and adjust if needed.
+2. \*Only for running **Option 2** (local server): Install dependencies with `npm install`.
+3. \*Only for running **Option 2** (local server): Copy `.env.example` to `.env` and adjust if needed.
    ```
    MONGO_URI=mongodb://localhost:27017/userscrm
    JWT_SECRET=supersecret
