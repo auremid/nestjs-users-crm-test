@@ -38,6 +38,8 @@ docker compose -f docker-compose.full.yml up -d --build
 
 API will be available at `http://localhost:3000`.
 
+API documentation (Swagger) available at `http://localhost:3000/api`.
+
 To view server logs:
 
 ```bash
@@ -59,6 +61,8 @@ npm run start:dev
 ```
 
 API will be available at `http://localhost:3000`.
+
+API documentation (Swagger) available at `http://localhost:3000/api`.
 
 Logs will be displayed in the terminal. To view them separately if needed:
 
