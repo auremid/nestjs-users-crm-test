@@ -36,9 +36,9 @@ This option runs the entire setup (API + MongoDB) in containers.
 docker compose -f docker-compose.full.yml up -d --build
 ```
 
-API will be available at `http://localhost:3000`.
+**API will be available at `http://localhost:3000`.**
 
-API documentation (Swagger) available at `http://localhost:3000/api`.
+**API documentation (Swagger) available at `http://localhost:3000/api`.**
 
 To view server logs:
 
@@ -60,15 +60,25 @@ Then run the server locally:
 npm run start:dev
 ```
 
-API will be available at `http://localhost:3000`.
+**API will be available at `http://localhost:3000`.**
 
-API documentation (Swagger) available at `http://localhost:3000/api`.
+**API documentation (Swagger) available at `http://localhost:3000/api`.**
 
 Logs will be displayed in the terminal. To view them separately if needed:
 
 ```bash
 # Since the server is running locally, logs are in the terminal where npm run start:dev is executed
 ```
+
+## API Testing
+
+### Swagger UI
+
+Use **Swagger UI** at `http://localhost:3000/api` after starting the server, to explore and test the API interactively.
+
+### Postman Collection
+
+Test the API with this [Postman collection](https://bit.ly/3M9lTOB).
 
 ## API Endpoints
 
@@ -179,10 +189,6 @@ Response:
   "updatedAt": "2023-01-01T00:00:00.000Z"
 }
 ```
-
-## Postman Collection
-
-Test the API with this [Postman collection](https://bit.ly/3M9lTOB).
 
 ## Filters on /api/v1/get-users
 
