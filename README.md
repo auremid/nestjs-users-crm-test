@@ -1,4 +1,4 @@
-# NestJS Users CRM
+# NestJS User Management API
 
 A simple REST API for user management, built with NestJS, MongoDB, Mongoose, and JWT authentication. On startup, it automatically creates 2 million random users if the database is empty.
 
